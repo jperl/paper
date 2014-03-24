@@ -1,11 +1,17 @@
 Famous.loaded(function (require) {
-    var Surface = require("famous/Surface"),
-        Modifier = require("famous/Modifier"),
-        Matrix = require("famous/Matrix"),
-        View = require("famous/View");
+    var Surface = require('famous/Surface'),
+        Modifier = require('famous/Modifier'),
+        Matrix = require('famous/Matrix'),
+        View = require('famous/View');
 
-    var CoverView = function () {
-        View.apply(this, arguments), this.profileImg = new Image, this.profileImg.src = this.options.img, this.profileImg.width = 320, this.profileImg.style.webkitBoxReflect = "below";
+    function CoverView() {
+        View.apply(this, arguments);
+
+        this.profileImg = new Image;
+        this.profileImg.src = this.options.img;
+        this.profileImg.width = 320;
+        this.profileImg.style.webkitBoxReflect = 'below';
+
         var coverBackground = new Surface({
             content: '<img width="320" src="covers/bg.png" />'
         });
@@ -20,7 +26,7 @@ Famous.loaded(function (require) {
             content: this.profileImg
         });
         this._add(profileImageSurface);
-    };
+    }
 
     CoverView.prototype = Object.create(View.prototype);
     CoverView.prototype.constructor = CoverView;
