@@ -3144,46 +3144,6 @@
                     target: this.cover.render()
                 }), this.spec
             }, e.exports = s
-        }), define("app/CoverViews/CoverView", ["require", "exports", "module", "famous/Surface", "famous/Modifier", "famous/Matrix", "famous/View", "famous-animation/Easing"], function(t, i, e) {
-            function s() {
-                a.apply(this, arguments), this.profileImg = new Image, this.profileImg.src = this.options.img, this.profileImg.width = 320, this.profileImg.style.webkitBoxReflect = "below";
-                var t = new o({
-                        content: '<img width="320" src="./img/covers/bg.png" />'
-                    }),
-                    i = new n({
-                        transform: r.translate(0, 0, .001)
-                    }),
-                    e = new o({
-                        size: [this.options.size, this.options.size],
-                        content: this.profileImg
-                    });
-                this._add(i).link(t), this._add(e)
-            } {
-                var o = t("famous/Surface"),
-                    n = t("famous/Modifier"),
-                    r = t("famous/Matrix"),
-                    a = t("famous/View");
-                t("famous-animation/Easing")
-            }
-            s.prototype = Object.create(a.prototype), s.prototype.constructor = s, s.DEFAULT_OPTIONS = {
-                text: null,
-                name: null,
-                img: null
-            }, e.exports = s
-        }), define("app/Data/CoverData", ["require", "exports", "module"], function(t, i, e) {
-            e.exports = [{
-                text: "Objects in the mirror are unluckier than they appear.",
-                img: "./img/covers/mirror.jpg",
-                name: "Steve Kuzminski"
-            }, {
-                text: "Kylie Wilson changed her profile picture",
-                img: "./img/covers/kylie.jpg",
-                name: "Kylie Wilson"
-            }, {
-                text: "Sick gifs from Sochi",
-                img: "./img/covers/sochi.jpg",
-                name: "Chris Zimmerman"
-            }]
         }), define("app/Data/StoryData", ["require", "exports", "module"], function(t, i, e) {
             e.exports = [{
                 name: "Nathalie Pickens",
@@ -3903,113 +3863,6 @@
                     target: this.cover.render()
                 }), this.spec
             }, e.exports = s
-        }), define("app/StoryViews/StoriesView", ["require", "exports", "module", "famous/Engine", "famous/Matrix", "famous/View", "famous/Modifier", "famous/EventHandler", "famous-sync/GenericSync", "famous/Transitionable", "famous-physics/utils/SpringTransition", "famous-views/Scrollview", "famous/ViewSequence", "famous/Utility", "famous-utils/Utils", "../Data/StoryData", "./StoryView", "./PhotoStoryView", "./ArticleStoryView"], function(t, i, e) {
-            function s() {
-                n.apply(this, arguments), S.call(this), g.call(this), w.call(this), window.app = this
-            }
-            var o = (t("famous/Engine"), t("famous/Matrix")),
-                n = t("famous/View"),
-                r = (t("famous/Modifier"), t("famous/EventHandler")),
-                a = t("famous-sync/GenericSync"),
-                h = t("famous/Transitionable"),
-                u = t("famous-physics/utils/SpringTransition"),
-                p = t("famous-views/Scrollview"),
-                c = t("famous/ViewSequence"),
-                l = t("famous/Utility"),
-                f = t("famous-utils/Utils"),
-                d = t("../Data/StoryData"),
-                m = t("./StoryView"),
-                y = t("./PhotoStoryView"),
-                v = t("./ArticleStoryView");
-            h.registerMethod("spring", u), s.prototype = Object.create(n.prototype), s.prototype.constructor = s, s.DEFAULT_OPTIONS = {
-                velThreshold: .7,
-                spring: {
-                    method: "spring",
-                    period: 200,
-                    dampingRatio: 1
-                },
-                curve: {
-                    duration: 500,
-                    curve: "easeOut"
-                },
-                cardScale: .445,
-                gutter: 2
-            }, s.DEFAULT_OPTIONS.cardWidth = s.DEFAULT_OPTIONS.cardScale * window.innerWidth, s.DEFAULT_OPTIONS.cardHeight = s.DEFAULT_OPTIONS.cardScale * window.innerHeight, s.DEFAULT_OPTIONS.initY = window.innerHeight - s.DEFAULT_OPTIONS.cardHeight, s.DEFAULT_OPTIONS.posThreshold = (window.innerHeight - s.DEFAULT_OPTIONS.cardHeight) / 2, s.DEFAULT_OPTIONS.scrollOpts = {
-                direction: l.Direction.X,
-                defaultItemSize: [s.DEFAULT_OPTIONS.cardWidth, s.DEFAULT_OPTIONS.cardHeight],
-                itemSpacing: 2 / s.DEFAULT_OPTIONS.cardScale,
-                margin: 3 * window.innerWidth,
-                pageSwitchSpeed: .1,
-                pagePeriod: 300,
-                pageDamp: 1,
-                speedLimit: 10,
-                drag: .001
-            };
-            var g = function() {
-                    this.storiesHandler = new r, this.scrollview = new p(this.options.scrollOpts), this.stories = [];
-                    for (var t = 0; t < d.length; t++) {
-                        var i, e = {
-                            profilePics: d[t].profilePics,
-                            name: d[t].name,
-                            text: d[t].text,
-                            time: d[t].time,
-                            likes: d[t].likes,
-                            comments: d[t].comments,
-                            scale: this.options.cardScale
-                        };
-                        d[t].article ? (e.content = d[t].article, e.thumbSm = d[t].articleThumbSm, e.thumbLg = d[t].articleThumbLg, e.velThreshold = this.options.velThreshold, i = new v(e)) : (e.photos = d[t].photos, i = d[t].photos && d[t].photos.length > 1 ? new y(e) : new m(e)), i.pipe(this.storiesHandler), this.stories.push(i), i.on("touchstart", function(t) {
-                            this.targetStory = t
-                        }.bind(this, i))
-                    }
-                    this.storiesHandler.pipe(this.scrollview), this.storiesHandler.pipe(this.ySync);
-                    var s = new c(this.stories, 0, !0);
-                    this.scrollview.sequenceFrom(s), this.scrollview.on("paginate", function() {
-                        this.targetStory.sequence && (this.targetStory.sequence(), this.targetStory.disableScroll())
-                    }.bind(this))
-                },
-                S = function() {
-                    this.yPos = new h(this.options.initY), this.ySync = new a(function() {
-                        return [0, this.yPos.get()]
-                    }.bind(this))
-                },
-                w = function() {
-                    this.ySync.on("start", function() {
-                        var t = this.yPos.get();
-                        this.direction = void 0, 0 === t && this.targetStory.scrollable && this.targetStory.enableScroll(), 0 === t && this.targetStory.flipable && this.targetStory.enableFlip(), this.enableY = !1
-                    }.bind(this)), this.ySync.on("update", function(t) {
-                        var i = this.yPos.get();
-                        this.direction || (Math.abs(t.v[1]) > Math.abs(t.v[0]) ? this.direction = "y" : (this.storiesHandler.unpipe(this.ySync), this.direction = "x")), "y" === this.direction ? (0 !== i ? (this.enableY = !0, this.swipeY = !0) : (this.targetStory.scrollable || this.targetStory.flipable || (this.enableY = !0), this.targetStory.scrollable && this.targetStory.top && t.v[1] > 0 && (this.targetStory.disableScroll(), this.enableY = !0), this.targetStory.flipable && this.targetStory.closed && t.v[1] > 0 && (this.targetStory.disableFlip(), this.enableY = !0)), this.enableY && this.yPos.set(Math.min(this.options.initY + 75, Math.max(-75, t.p[1])))) : this.targetStory.scrollable && Math.abs(this.targetStory.scrollview.getVelocity()) > .05 && this.storiesHandler.unpipe(this.scrollview)
-                    }.bind(this)), this.ySync.on("end", function(t) {
-                        this.storiesHandler.pipe(this.scrollview), this.storiesHandler.pipe(this.ySync);
-                        var i = t.v[1].toFixed(2);
-                        this.enableY && (this.yPos.get() < this.options.posThreshold ? i > this.options.velThreshold ? this.slideDown(i) : this.slideUp(Math.abs(i)) : i < -this.options.velThreshold ? this.slideUp(Math.abs(i)) : this.slideDown(i))
-                    }.bind(this))
-                };
-            s.prototype.slideUp = function(t) {
-                console.log("slide up");
-                var i = this.options.spring;
-                i.velocity = t, this.options.scrollOpts.paginated = !0, this.scrollview.setOptions(this.options.scrollOpts), this.yPos.set(0, i)
-            }, s.prototype.slideDown = function(t) {
-                console.log("slide down");
-                var i = this.options.spring;
-                i.velocity = t, this.options.scrollOpts.paginated = !1, this.scrollview.setOptions(this.options.scrollOpts), this.yPos.set(this.options.initY, i)
-            }, s.prototype.render = function() {
-                var t = this.yPos.get(),
-                    i = f.map(t, 0, this.options.initY, 1, this.options.cardScale);
-                this.progress = f.map(t, this.options.initY, 0, 0, 1, !0), this.scrollview.sync.setOptions({
-                    direction: a.DIRECTION_X,
-                    scale: 1 / i
-                });
-                for (var e = 0; e < this.stories.length; e++) this.stories[e].setProgress(this.progress);
-                return this.spec = [], this.spec.push({
-                    origin: [.5, 1],
-                    transform: o.scale(i, i, 1),
-                    target: {
-                        size: [window.innerWidth, window.innerHeight],
-                        target: this.scrollview.render()
-                    }
-                }), this.spec
-            }, e.exports = s
         }), define("famous-views/LightBox", ["require", "exports", "module", "famous/Matrix", "famous/Modifier", "famous/RenderNode", "famous/Utility"], function(t, i, e) {
             function s(t) {
                 this.options = {
@@ -4065,50 +3918,6 @@
                 for (var t = [], i = 0; i < this.nodes.length; i++) t.push(this.nodes[i].render());
                 return t
             }, e.exports = s
-        }), define("app/AppView", ["require", "exports", "module", "famous/Engine", "famous/Modifier", "famous/Surface", "famous/Matrix", "famous/View", "famous-animation/Easing", "famous-sync/GenericSync", "famous/Transitionable", "famous-physics/utils/SpringTransition", "famous-views/LightBox", "famous-utils/Time", "./StoryViews/StoriesView", "./CoverViews/CoverView", "./Data/CoverData"], function(t, i, e) {
-            function s() {
-                r.apply(this, arguments), this.storiesView = new c, this.lightbox = new u({
-                    inTransform: n.identity,
-                    inOpacity: 0,
-                    inOrigin: [.5, .5],
-                    outTransform: n.identity,
-                    outOpacity: 0,
-                    outOrigin: [.5, .5],
-                    showTransform: n.identity,
-                    showOpacity: 1,
-                    showOrigin: [.5, .5],
-                    inTransition: {
-                        duration: 1e3
-                    },
-                    outTransition: {
-                        duration: 1e3
-                    },
-                    overlap: !0
-                }), this.covers = [];
-                for (var t = 0; t < f.length; t++) {
-                    var i = new l(f[t]);
-                    this.covers.push(i)
-                }
-                var t = 0;
-                this.lightbox.show(this.covers[0]), p.setInterval(function() {
-                    t++, t === this.covers.length && (t = 0), this.lightbox.show(this.covers[t])
-                }.bind(this), 4e3);
-                var e = new o({
-                    transform: n.translate(0, 0, -.1)
-                });
-                this._add(e).link(this.lightbox), this._add(this.storiesView)
-            }
-            var o = (t("famous/Engine"), t("famous/Modifier")),
-                n = (t("famous/Surface"), t("famous/Matrix")),
-                r = t("famous/View"),
-                a = (t("famous-animation/Easing"), t("famous-sync/GenericSync"), t("famous/Transitionable")),
-                h = t("famous-physics/utils/SpringTransition"),
-                u = t("famous-views/LightBox"),
-                p = t("famous-utils/Time"),
-                c = t("./StoryViews/StoriesView"),
-                l = t("./CoverViews/CoverView"),
-                f = t("./Data/CoverData");
-            a.registerMethod("spring", h), s.prototype = Object.create(r.prototype), s.prototype.constructor = s, s.DEFAULT_OPTIONS = {}, e.exports = s
         }), define("famous/CanvasSurface", ["require", "exports", "module", "./Surface"], function(t, i, e) {
             function s(t) {
                 t && t.canvasSize && (this.canvasSize = t.canvasSize), o.call(this, t), this.canvasSize || (this.canvasSize = this.getSize()), this.backBuffer = document.createElement("canvas"), this.canvasSize && (this.backBuffer.width = this.canvasSize[0], this.backBuffer.height = this.canvasSize[1]), this._contextId = void 0
@@ -10054,10 +9863,10 @@
                 for (var i in this.nodes) t.push(this.nodes[i].render());
                 return t
             }, e.exports = s
-        }), define("main", ["require", "exports", "module", "app/ArticleViews/ArticleBottomView", "app/ArticleViews/ArticleFullView", "app/ArticleViews/ArticleTopView", "app/ArticleViews/ArticleView", "app/CoverViews/CoverView", "app/Data/CoverData", "app/Data/StoryData", "app/StoryViews/ArticleStoryView", "app/StoryViews/FooterView", "app/StoryViews/NameView", "app/StoryViews/NumberView", "app/StoryViews/PhotoStoryView", "app/StoryViews/ProfilePicView", "app/StoryViews/ProfilePicsView", "app/StoryViews/StoriesView", "app/StoryViews/StoryView", "app/StoryViews/TextView", "app/AppView", "famous/CanvasSurface", "famous/ContainerSurface", "famous/Context", "famous/ElementAllocator", "famous/Engine", "famous/Entity", "famous/EventArbiter", "famous/EventHandler", "famous/Group", "famous/ImageSurface", "famous/Matrix", "famous/Modifier", "famous/MultipleTransition", "famous/OptionsManager", "famous/RenderNode", "famous/Scene", "famous/SceneCompiler", "famous/SpecParser", "famous/Surface", "famous/Timer", "famous/Transitionable", "famous/TweenTransition", "famous/Utility", "famous/VideoSurface", "famous/View", "famous/ViewSequence", "famous/WebGLSurface", "famous-animation/Animation", "famous-animation/AnimationEngine", "famous-animation/CubicBezier", "famous-animation/Easing", "famous-animation/GenericAnimation", "famous-animation/Idle", "famous-animation/PiecewiseCubicBezier", "famous-animation/RegisterEasing", "famous-animation/Sequence", "famous-animation/Timer", "famous-color/Color", "famous-color/ColorPalette", "famous-color/ColorPalettes", "famous-math/Quaternion", "famous-math/Random", "famous-math/Vector", "famous-modifiers/Camera", "famous-modifiers/Draggable", "famous-performance/Profiler", "famous-performance/ProfilerMetric", "famous-performance/ProfilerMetricView", "famous-performance/ProfilerView", "famous-physics/bodies/Body", "famous-physics/bodies/Circle", "famous-physics/bodies/Particle", "famous-physics/bodies/Rectangle", "famous-physics/constraints/Collision", "famous-physics/constraints/CollisionJacobian", "famous-physics/constraints/Constraint", "famous-physics/constraints/Curve", "famous-physics/constraints/Distance", "famous-physics/constraints/Distance1D", "famous-physics/constraints/Rod", "famous-physics/constraints/Rope", "famous-physics/constraints/StiffSpring", "famous-physics/constraints/Surface", "famous-physics/constraints/Wall", "famous-physics/constraints/Walls", "famous-physics/constraints/joint", "famous-physics/forces/Drag", "famous-physics/forces/Force", "famous-physics/forces/Repulsion", "famous-physics/forces/Spring", "famous-physics/forces/TorqueSpring", "famous-physics/forces/VectorField", "famous-physics/forces/rotationalDrag", "famous-physics/integrator/SymplecticEuler", "famous-physics/integrator/verlet", "famous-physics/math/GaussSeidel", "famous-physics/math/Quaternion", "famous-physics/math/Random", "famous-physics/math/Vector", "famous-physics/math/matrix", "famous-physics/utils/PhysicsTransition", "famous-physics/utils/PhysicsTransition2", "famous-physics/utils/SpringTransition", "famous-physics/utils/StiffSpringTransition", "famous-physics/utils/WallTransition", "famous-physics/PhysicsEngine", "famous-sync/FastClick", "famous-sync/GenericSync", "famous-sync/MouseSync", "famous-sync/PinchSync", "famous-sync/RotateSync", "famous-sync/ScaleSync", "famous-sync/ScrollSync", "famous-sync/TouchSync", "famous-sync/TouchTracker", "famous-sync/TwoFingerSync", "famous-ui/Buttons/ButtonBase", "famous-ui/Buttons/RotateButton", "famous-ui/Buttons/SpringButton", "famous-ui/Buttons/SpringButton.ui", "famous-ui/ColorPicker/AlphaPicker", "famous-ui/ColorPicker/CanvasPicker", "famous-ui/ColorPicker/ColorButton", "famous-ui/ColorPicker/ColorPicker", "famous-ui/ColorPicker/GradientPicker", "famous-ui/ColorPicker/HuePicker", "famous-ui/Dropdown/Dropdown", "famous-ui/Dropdown/DropdownItem", "famous-ui/Easing/CanvasDrawer", "famous-ui/Easing/EasingBool", "famous-ui/Easing/EasingVisualizer", "famous-ui/Easing/MultiEasingToggle", "famous-ui/Text/Label", "famous-ui/Toggles/BoolToggle", "famous-ui/Toggles/MultiBoolToggle", "famous-ui/AutoUI", "famous-ui/PanelScrollview", "famous-ui/Slider", "famous-utils/FormatTime", "famous-utils/KeyCodes", "famous-utils/NoiseImage", "famous-utils/Time", "famous-utils/TimeAgo", "famous-utils/Utils", "famous-views/ControlSet", "famous-views/Flip", "famous-views/InputSurface", "famous-views/LightBox", "famous-views/ScrollContainer", "famous-views/Scrollview", "famous-views/SequentialLayout", "famous-views/Shaper", "famous-views/Swappable", "surface-extensions/ExpandingSurface"], function(t, i, e) {
+        }), define("main", ["require", "exports", "module", "app/ArticleViews/ArticleBottomView", "app/ArticleViews/ArticleFullView", "app/ArticleViews/ArticleTopView", "app/ArticleViews/ArticleView", "app/Data/StoryData", "app/StoryViews/ArticleStoryView", "app/StoryViews/FooterView", "app/StoryViews/NameView", "app/StoryViews/NumberView", "app/StoryViews/PhotoStoryView", "app/StoryViews/ProfilePicView", "app/StoryViews/ProfilePicsView", "app/StoryViews/StoryView", "app/StoryViews/TextView", "famous/CanvasSurface", "famous/ContainerSurface", "famous/Context", "famous/ElementAllocator", "famous/Engine", "famous/Entity", "famous/EventArbiter", "famous/EventHandler", "famous/Group", "famous/ImageSurface", "famous/Matrix", "famous/Modifier", "famous/MultipleTransition", "famous/OptionsManager", "famous/RenderNode", "famous/Scene", "famous/SceneCompiler", "famous/SpecParser", "famous/Surface", "famous/Timer", "famous/Transitionable", "famous/TweenTransition", "famous/Utility", "famous/VideoSurface", "famous/View", "famous/ViewSequence", "famous/WebGLSurface", "famous-animation/Animation", "famous-animation/AnimationEngine", "famous-animation/CubicBezier", "famous-animation/Easing", "famous-animation/GenericAnimation", "famous-animation/Idle", "famous-animation/PiecewiseCubicBezier", "famous-animation/RegisterEasing", "famous-animation/Sequence", "famous-animation/Timer", "famous-color/Color", "famous-color/ColorPalette", "famous-color/ColorPalettes", "famous-math/Quaternion", "famous-math/Random", "famous-math/Vector", "famous-modifiers/Camera", "famous-modifiers/Draggable", "famous-performance/Profiler", "famous-performance/ProfilerMetric", "famous-performance/ProfilerMetricView", "famous-performance/ProfilerView", "famous-physics/bodies/Body", "famous-physics/bodies/Circle", "famous-physics/bodies/Particle", "famous-physics/bodies/Rectangle", "famous-physics/constraints/Collision", "famous-physics/constraints/CollisionJacobian", "famous-physics/constraints/Constraint", "famous-physics/constraints/Curve", "famous-physics/constraints/Distance", "famous-physics/constraints/Distance1D", "famous-physics/constraints/Rod", "famous-physics/constraints/Rope", "famous-physics/constraints/StiffSpring", "famous-physics/constraints/Surface", "famous-physics/constraints/Wall", "famous-physics/constraints/Walls", "famous-physics/constraints/joint", "famous-physics/forces/Drag", "famous-physics/forces/Force", "famous-physics/forces/Repulsion", "famous-physics/forces/Spring", "famous-physics/forces/TorqueSpring", "famous-physics/forces/VectorField", "famous-physics/forces/rotationalDrag", "famous-physics/integrator/SymplecticEuler", "famous-physics/integrator/verlet", "famous-physics/math/GaussSeidel", "famous-physics/math/Quaternion", "famous-physics/math/Random", "famous-physics/math/Vector", "famous-physics/math/matrix", "famous-physics/utils/PhysicsTransition", "famous-physics/utils/PhysicsTransition2", "famous-physics/utils/SpringTransition", "famous-physics/utils/StiffSpringTransition", "famous-physics/utils/WallTransition", "famous-physics/PhysicsEngine", "famous-sync/FastClick", "famous-sync/GenericSync", "famous-sync/MouseSync", "famous-sync/PinchSync", "famous-sync/RotateSync", "famous-sync/ScaleSync", "famous-sync/ScrollSync", "famous-sync/TouchSync", "famous-sync/TouchTracker", "famous-sync/TwoFingerSync", "famous-ui/Buttons/ButtonBase", "famous-ui/Buttons/RotateButton", "famous-ui/Buttons/SpringButton", "famous-ui/Buttons/SpringButton.ui", "famous-ui/ColorPicker/AlphaPicker", "famous-ui/ColorPicker/CanvasPicker", "famous-ui/ColorPicker/ColorButton", "famous-ui/ColorPicker/ColorPicker", "famous-ui/ColorPicker/GradientPicker", "famous-ui/ColorPicker/HuePicker", "famous-ui/Dropdown/Dropdown", "famous-ui/Dropdown/DropdownItem", "famous-ui/Easing/CanvasDrawer", "famous-ui/Easing/EasingBool", "famous-ui/Easing/EasingVisualizer", "famous-ui/Easing/MultiEasingToggle", "famous-ui/Text/Label", "famous-ui/Toggles/BoolToggle", "famous-ui/Toggles/MultiBoolToggle", "famous-ui/AutoUI", "famous-ui/PanelScrollview", "famous-ui/Slider", "famous-utils/FormatTime", "famous-utils/KeyCodes", "famous-utils/NoiseImage", "famous-utils/Time", "famous-utils/TimeAgo", "famous-utils/Utils", "famous-views/ControlSet", "famous-views/Flip", "famous-views/InputSurface", "famous-views/LightBox", "famous-views/ScrollContainer", "famous-views/Scrollview", "famous-views/SequentialLayout", "famous-views/Shaper", "famous-views/Swappable", "surface-extensions/ExpandingSurface"], function(t, i, e) {
             var s = function(i) {
                 i.call(this, t)
             };
-            s.App = {}, s.App.ArticleViews_ArticleBottomView = t("app/ArticleViews/ArticleBottomView"), s.App.ArticleViews_ArticleFullView = t("app/ArticleViews/ArticleFullView"), s.App.ArticleViews_ArticleTopView = t("app/ArticleViews/ArticleTopView"), s.App.ArticleViews_ArticleView = t("app/ArticleViews/ArticleView"), s.App.CoverViews_CoverView = t("app/CoverViews/CoverView"), s.App.Data_CoverData = t("app/Data/CoverData"), s.App.Data_StoryData = t("app/Data/StoryData"), s.App.StoryViews_ArticleStoryView = t("app/StoryViews/ArticleStoryView"), s.App.StoryViews_FooterView = t("app/StoryViews/FooterView"), s.App.StoryViews_NameView = t("app/StoryViews/NameView"), s.App.StoryViews_NumberView = t("app/StoryViews/NumberView"), s.App.StoryViews_PhotoStoryView = t("app/StoryViews/PhotoStoryView"), s.App.StoryViews_ProfilePicView = t("app/StoryViews/ProfilePicView"), s.App.StoryViews_ProfilePicsView = t("app/StoryViews/ProfilePicsView"), s.App.StoryViews_StoriesView = t("app/StoryViews/StoriesView"), s.App.StoryViews_StoryView = t("app/StoryViews/StoryView"), s.App.StoryViews_TextView = t("app/StoryViews/TextView"), s.App.AppView = t("app/AppView"), s.Famous = {}, s.Famous.CanvasSurface = t("famous/CanvasSurface"), s.Famous.ContainerSurface = t("famous/ContainerSurface"), s.Famous.Context = t("famous/Context"), s.Famous.ElementAllocator = t("famous/ElementAllocator"), s.Famous.Engine = t("famous/Engine"), s.Famous.Entity = t("famous/Entity"), s.Famous.EventArbiter = t("famous/EventArbiter"), s.Famous.EventHandler = t("famous/EventHandler"), s.Famous.Group = t("famous/Group"), s.Famous.ImageSurface = t("famous/ImageSurface"), s.Famous.Matrix = t("famous/Matrix"), s.Famous.Modifier = t("famous/Modifier"), s.Famous.MultipleTransition = t("famous/MultipleTransition"), s.Famous.OptionsManager = t("famous/OptionsManager"), s.Famous.RenderNode = t("famous/RenderNode"), s.Famous.Scene = t("famous/Scene"), s.Famous.SceneCompiler = t("famous/SceneCompiler"), s.Famous.SpecParser = t("famous/SpecParser"), s.Famous.Surface = t("famous/Surface"), s.Famous.Timer = t("famous/Timer"), s.Famous.Transitionable = t("famous/Transitionable"), s.Famous.TweenTransition = t("famous/TweenTransition"), s.Famous.Utility = t("famous/Utility"), s.Famous.VideoSurface = t("famous/VideoSurface"), s.Famous.View = t("famous/View"), s.Famous.ViewSequence = t("famous/ViewSequence"), s.Famous.WebGLSurface = t("famous/WebGLSurface"), s.FamousAnimation = {}, s.FamousAnimation.Animation = t("famous-animation/Animation"), s.FamousAnimation.AnimationEngine = t("famous-animation/AnimationEngine"), s.FamousAnimation.CubicBezier = t("famous-animation/CubicBezier"), s.FamousAnimation.Easing = t("famous-animation/Easing"), s.FamousAnimation.GenericAnimation = t("famous-animation/GenericAnimation"), s.FamousAnimation.Idle = t("famous-animation/Idle"), s.FamousAnimation.PiecewiseCubicBezier = t("famous-animation/PiecewiseCubicBezier"), s.FamousAnimation.RegisterEasing = t("famous-animation/RegisterEasing"), s.FamousAnimation.Sequence = t("famous-animation/Sequence"), s.FamousAnimation.Timer = t("famous-animation/Timer"), s.FamousColor = {}, s.FamousColor.Color = t("famous-color/Color"), s.FamousColor.ColorPalette = t("famous-color/ColorPalette"), s.FamousColor.ColorPalettes = t("famous-color/ColorPalettes"), s.FamousMath = {}, s.FamousMath.Quaternion = t("famous-math/Quaternion"), s.FamousMath.Random = t("famous-math/Random"), s.FamousMath.Vector = t("famous-math/Vector"), s.FamousModifiers = {}, s.FamousModifiers.Camera = t("famous-modifiers/Camera"), s.FamousModifiers.Draggable = t("famous-modifiers/Draggable"), s.FamousPerformance = {}, s.FamousPerformance.Profiler = t("famous-performance/Profiler"), s.FamousPerformance.ProfilerMetric = t("famous-performance/ProfilerMetric"), s.FamousPerformance.ProfilerMetricView = t("famous-performance/ProfilerMetricView"), s.FamousPerformance.ProfilerView = t("famous-performance/ProfilerView"), s.FamousPhysics = {}, s.FamousPhysics.Bodies_Body = t("famous-physics/bodies/Body"), s.FamousPhysics.Bodies_Circle = t("famous-physics/bodies/Circle"), s.FamousPhysics.Bodies_Particle = t("famous-physics/bodies/Particle"), s.FamousPhysics.Bodies_Rectangle = t("famous-physics/bodies/Rectangle"), s.FamousPhysics.Constraints_Collision = t("famous-physics/constraints/Collision"), s.FamousPhysics.Constraints_CollisionJacobian = t("famous-physics/constraints/CollisionJacobian"), s.FamousPhysics.Constraints_Constraint = t("famous-physics/constraints/Constraint"), s.FamousPhysics.Constraints_Curve = t("famous-physics/constraints/Curve"), s.FamousPhysics.Constraints_Distance = t("famous-physics/constraints/Distance"), s.FamousPhysics.Constraints_Distance1D = t("famous-physics/constraints/Distance1D"), s.FamousPhysics.Constraints_Rod = t("famous-physics/constraints/Rod"), s.FamousPhysics.Constraints_Rope = t("famous-physics/constraints/Rope"), s.FamousPhysics.Constraints_StiffSpring = t("famous-physics/constraints/StiffSpring"), s.FamousPhysics.Constraints_Surface = t("famous-physics/constraints/Surface"), s.FamousPhysics.Constraints_Wall = t("famous-physics/constraints/Wall"), s.FamousPhysics.Constraints_Walls = t("famous-physics/constraints/Walls"), s.FamousPhysics.Constraints_joint = t("famous-physics/constraints/joint"), s.FamousPhysics.Forces_Drag = t("famous-physics/forces/Drag"), s.FamousPhysics.Forces_Force = t("famous-physics/forces/Force"), s.FamousPhysics.Forces_Repulsion = t("famous-physics/forces/Repulsion"), s.FamousPhysics.Forces_Spring = t("famous-physics/forces/Spring"), s.FamousPhysics.Forces_TorqueSpring = t("famous-physics/forces/TorqueSpring"), s.FamousPhysics.Forces_VectorField = t("famous-physics/forces/VectorField"), s.FamousPhysics.Forces_rotationalDrag = t("famous-physics/forces/rotationalDrag"), s.FamousPhysics.Integrator_SymplecticEuler = t("famous-physics/integrator/SymplecticEuler"), s.FamousPhysics.Integrator_verlet = t("famous-physics/integrator/verlet"), s.FamousPhysics.Math_GaussSeidel = t("famous-physics/math/GaussSeidel"), s.FamousPhysics.Math_Quaternion = t("famous-physics/math/Quaternion"), s.FamousPhysics.Math_Random = t("famous-physics/math/Random"), s.FamousPhysics.Math_Vector = t("famous-physics/math/Vector"), s.FamousPhysics.Math_matrix = t("famous-physics/math/matrix"), s.FamousPhysics.Utils_PhysicsTransition = t("famous-physics/utils/PhysicsTransition"), s.FamousPhysics.Utils_PhysicsTransition2 = t("famous-physics/utils/PhysicsTransition2"), s.FamousPhysics.Utils_SpringTransition = t("famous-physics/utils/SpringTransition"), s.FamousPhysics.Utils_StiffSpringTransition = t("famous-physics/utils/StiffSpringTransition"), s.FamousPhysics.Utils_WallTransition = t("famous-physics/utils/WallTransition"), s.FamousPhysics.PhysicsEngine = t("famous-physics/PhysicsEngine"), s.FamousSync = {}, s.FamousSync.FastClick = t("famous-sync/FastClick"), s.FamousSync.GenericSync = t("famous-sync/GenericSync"), s.FamousSync.MouseSync = t("famous-sync/MouseSync"), s.FamousSync.PinchSync = t("famous-sync/PinchSync"), s.FamousSync.RotateSync = t("famous-sync/RotateSync"), s.FamousSync.ScaleSync = t("famous-sync/ScaleSync"), s.FamousSync.ScrollSync = t("famous-sync/ScrollSync"), s.FamousSync.TouchSync = t("famous-sync/TouchSync"), s.FamousSync.TouchTracker = t("famous-sync/TouchTracker"), s.FamousSync.TwoFingerSync = t("famous-sync/TwoFingerSync"), s.FamousUi = {}, s.FamousUi.Buttons_ButtonBase = t("famous-ui/Buttons/ButtonBase"), s.FamousUi.Buttons_RotateButton = t("famous-ui/Buttons/RotateButton"), s.FamousUi.Buttons_SpringButton = t("famous-ui/Buttons/SpringButton"), s.FamousUi.Buttons_SpringButton.ui = t("famous-ui/Buttons/SpringButton.ui"), s.FamousUi.ColorPicker_AlphaPicker = t("famous-ui/ColorPicker/AlphaPicker"), s.FamousUi.ColorPicker_CanvasPicker = t("famous-ui/ColorPicker/CanvasPicker"), s.FamousUi.ColorPicker_ColorButton = t("famous-ui/ColorPicker/ColorButton"), s.FamousUi.ColorPicker_ColorPicker = t("famous-ui/ColorPicker/ColorPicker"), s.FamousUi.ColorPicker_GradientPicker = t("famous-ui/ColorPicker/GradientPicker"), s.FamousUi.ColorPicker_HuePicker = t("famous-ui/ColorPicker/HuePicker"), s.FamousUi.Dropdown_Dropdown = t("famous-ui/Dropdown/Dropdown"), s.FamousUi.Dropdown_DropdownItem = t("famous-ui/Dropdown/DropdownItem"), s.FamousUi.Easing_CanvasDrawer = t("famous-ui/Easing/CanvasDrawer"), s.FamousUi.Easing_EasingBool = t("famous-ui/Easing/EasingBool"), s.FamousUi.Easing_EasingVisualizer = t("famous-ui/Easing/EasingVisualizer"), s.FamousUi.Easing_MultiEasingToggle = t("famous-ui/Easing/MultiEasingToggle"), s.FamousUi.Text_Label = t("famous-ui/Text/Label"), s.FamousUi.Toggles_BoolToggle = t("famous-ui/Toggles/BoolToggle"), s.FamousUi.Toggles_MultiBoolToggle = t("famous-ui/Toggles/MultiBoolToggle"), s.FamousUi.AutoUI = t("famous-ui/AutoUI"), s.FamousUi.PanelScrollview = t("famous-ui/PanelScrollview"), s.FamousUi.Slider = t("famous-ui/Slider"), s.FamousUtils = {}, s.FamousUtils.FormatTime = t("famous-utils/FormatTime"), s.FamousUtils.KeyCodes = t("famous-utils/KeyCodes"), s.FamousUtils.NoiseImage = t("famous-utils/NoiseImage"), s.FamousUtils.Time = t("famous-utils/Time"), s.FamousUtils.TimeAgo = t("famous-utils/TimeAgo"), s.FamousUtils.Utils = t("famous-utils/Utils"), s.FamousViews = {}, s.FamousViews.ControlSet = t("famous-views/ControlSet"), s.FamousViews.Flip = t("famous-views/Flip"), s.FamousViews.InputSurface = t("famous-views/InputSurface"), s.FamousViews.LightBox = t("famous-views/LightBox"), s.FamousViews.ScrollContainer = t("famous-views/ScrollContainer"), s.FamousViews.Scrollview = t("famous-views/Scrollview"), s.FamousViews.SequentialLayout = t("famous-views/SequentialLayout"), s.FamousViews.Shaper = t("famous-views/Shaper"), s.FamousViews.Swappable = t("famous-views/Swappable"), s.SurfaceExtensions = {}, s.SurfaceExtensions.ExpandingSurface = t("surface-extensions/ExpandingSurface"), e.exports = s
+            s.App = {}, s.App.ArticleViews_ArticleBottomView = t("app/ArticleViews/ArticleBottomView"), s.App.ArticleViews_ArticleFullView = t("app/ArticleViews/ArticleFullView"), s.App.ArticleViews_ArticleTopView = t("app/ArticleViews/ArticleTopView"), s.App.ArticleViews_ArticleView = t("app/ArticleViews/ArticleView"), s.App.Data_StoryData = t("app/Data/StoryData"), s.App.StoryViews_ArticleStoryView = t("app/StoryViews/ArticleStoryView"), s.App.StoryViews_FooterView = t("app/StoryViews/FooterView"), s.App.StoryViews_NameView = t("app/StoryViews/NameView"), s.App.StoryViews_NumberView = t("app/StoryViews/NumberView"), s.App.StoryViews_PhotoStoryView = t("app/StoryViews/PhotoStoryView"), s.App.StoryViews_ProfilePicView = t("app/StoryViews/ProfilePicView"), s.App.StoryViews_ProfilePicsView = t("app/StoryViews/ProfilePicsView"), s.App.StoryViews_StoryView = t("app/StoryViews/StoryView"), s.App.StoryViews_TextView = t("app/StoryViews/TextView"), s.Famous = {}, s.Famous.CanvasSurface = t("famous/CanvasSurface"), s.Famous.ContainerSurface = t("famous/ContainerSurface"), s.Famous.Context = t("famous/Context"), s.Famous.ElementAllocator = t("famous/ElementAllocator"), s.Famous.Engine = t("famous/Engine"), s.Famous.Entity = t("famous/Entity"), s.Famous.EventArbiter = t("famous/EventArbiter"), s.Famous.EventHandler = t("famous/EventHandler"), s.Famous.Group = t("famous/Group"), s.Famous.ImageSurface = t("famous/ImageSurface"), s.Famous.Matrix = t("famous/Matrix"), s.Famous.Modifier = t("famous/Modifier"), s.Famous.MultipleTransition = t("famous/MultipleTransition"), s.Famous.OptionsManager = t("famous/OptionsManager"), s.Famous.RenderNode = t("famous/RenderNode"), s.Famous.Scene = t("famous/Scene"), s.Famous.SceneCompiler = t("famous/SceneCompiler"), s.Famous.SpecParser = t("famous/SpecParser"), s.Famous.Surface = t("famous/Surface"), s.Famous.Timer = t("famous/Timer"), s.Famous.Transitionable = t("famous/Transitionable"), s.Famous.TweenTransition = t("famous/TweenTransition"), s.Famous.Utility = t("famous/Utility"), s.Famous.VideoSurface = t("famous/VideoSurface"), s.Famous.View = t("famous/View"), s.Famous.ViewSequence = t("famous/ViewSequence"), s.Famous.WebGLSurface = t("famous/WebGLSurface"), s.FamousAnimation = {}, s.FamousAnimation.Animation = t("famous-animation/Animation"), s.FamousAnimation.AnimationEngine = t("famous-animation/AnimationEngine"), s.FamousAnimation.CubicBezier = t("famous-animation/CubicBezier"), s.FamousAnimation.Easing = t("famous-animation/Easing"), s.FamousAnimation.GenericAnimation = t("famous-animation/GenericAnimation"), s.FamousAnimation.Idle = t("famous-animation/Idle"), s.FamousAnimation.PiecewiseCubicBezier = t("famous-animation/PiecewiseCubicBezier"), s.FamousAnimation.RegisterEasing = t("famous-animation/RegisterEasing"), s.FamousAnimation.Sequence = t("famous-animation/Sequence"), s.FamousAnimation.Timer = t("famous-animation/Timer"), s.FamousColor = {}, s.FamousColor.Color = t("famous-color/Color"), s.FamousColor.ColorPalette = t("famous-color/ColorPalette"), s.FamousColor.ColorPalettes = t("famous-color/ColorPalettes"), s.FamousMath = {}, s.FamousMath.Quaternion = t("famous-math/Quaternion"), s.FamousMath.Random = t("famous-math/Random"), s.FamousMath.Vector = t("famous-math/Vector"), s.FamousModifiers = {}, s.FamousModifiers.Camera = t("famous-modifiers/Camera"), s.FamousModifiers.Draggable = t("famous-modifiers/Draggable"), s.FamousPerformance = {}, s.FamousPerformance.Profiler = t("famous-performance/Profiler"), s.FamousPerformance.ProfilerMetric = t("famous-performance/ProfilerMetric"), s.FamousPerformance.ProfilerMetricView = t("famous-performance/ProfilerMetricView"), s.FamousPerformance.ProfilerView = t("famous-performance/ProfilerView"), s.FamousPhysics = {}, s.FamousPhysics.Bodies_Body = t("famous-physics/bodies/Body"), s.FamousPhysics.Bodies_Circle = t("famous-physics/bodies/Circle"), s.FamousPhysics.Bodies_Particle = t("famous-physics/bodies/Particle"), s.FamousPhysics.Bodies_Rectangle = t("famous-physics/bodies/Rectangle"), s.FamousPhysics.Constraints_Collision = t("famous-physics/constraints/Collision"), s.FamousPhysics.Constraints_CollisionJacobian = t("famous-physics/constraints/CollisionJacobian"), s.FamousPhysics.Constraints_Constraint = t("famous-physics/constraints/Constraint"), s.FamousPhysics.Constraints_Curve = t("famous-physics/constraints/Curve"), s.FamousPhysics.Constraints_Distance = t("famous-physics/constraints/Distance"), s.FamousPhysics.Constraints_Distance1D = t("famous-physics/constraints/Distance1D"), s.FamousPhysics.Constraints_Rod = t("famous-physics/constraints/Rod"), s.FamousPhysics.Constraints_Rope = t("famous-physics/constraints/Rope"), s.FamousPhysics.Constraints_StiffSpring = t("famous-physics/constraints/StiffSpring"), s.FamousPhysics.Constraints_Surface = t("famous-physics/constraints/Surface"), s.FamousPhysics.Constraints_Wall = t("famous-physics/constraints/Wall"), s.FamousPhysics.Constraints_Walls = t("famous-physics/constraints/Walls"), s.FamousPhysics.Constraints_joint = t("famous-physics/constraints/joint"), s.FamousPhysics.Forces_Drag = t("famous-physics/forces/Drag"), s.FamousPhysics.Forces_Force = t("famous-physics/forces/Force"), s.FamousPhysics.Forces_Repulsion = t("famous-physics/forces/Repulsion"), s.FamousPhysics.Forces_Spring = t("famous-physics/forces/Spring"), s.FamousPhysics.Forces_TorqueSpring = t("famous-physics/forces/TorqueSpring"), s.FamousPhysics.Forces_VectorField = t("famous-physics/forces/VectorField"), s.FamousPhysics.Forces_rotationalDrag = t("famous-physics/forces/rotationalDrag"), s.FamousPhysics.Integrator_SymplecticEuler = t("famous-physics/integrator/SymplecticEuler"), s.FamousPhysics.Integrator_verlet = t("famous-physics/integrator/verlet"), s.FamousPhysics.Math_GaussSeidel = t("famous-physics/math/GaussSeidel"), s.FamousPhysics.Math_Quaternion = t("famous-physics/math/Quaternion"), s.FamousPhysics.Math_Random = t("famous-physics/math/Random"), s.FamousPhysics.Math_Vector = t("famous-physics/math/Vector"), s.FamousPhysics.Math_matrix = t("famous-physics/math/matrix"), s.FamousPhysics.Utils_PhysicsTransition = t("famous-physics/utils/PhysicsTransition"), s.FamousPhysics.Utils_PhysicsTransition2 = t("famous-physics/utils/PhysicsTransition2"), s.FamousPhysics.Utils_SpringTransition = t("famous-physics/utils/SpringTransition"), s.FamousPhysics.Utils_StiffSpringTransition = t("famous-physics/utils/StiffSpringTransition"), s.FamousPhysics.Utils_WallTransition = t("famous-physics/utils/WallTransition"), s.FamousPhysics.PhysicsEngine = t("famous-physics/PhysicsEngine"), s.FamousSync = {}, s.FamousSync.FastClick = t("famous-sync/FastClick"), s.FamousSync.GenericSync = t("famous-sync/GenericSync"), s.FamousSync.MouseSync = t("famous-sync/MouseSync"), s.FamousSync.PinchSync = t("famous-sync/PinchSync"), s.FamousSync.RotateSync = t("famous-sync/RotateSync"), s.FamousSync.ScaleSync = t("famous-sync/ScaleSync"), s.FamousSync.ScrollSync = t("famous-sync/ScrollSync"), s.FamousSync.TouchSync = t("famous-sync/TouchSync"), s.FamousSync.TouchTracker = t("famous-sync/TouchTracker"), s.FamousSync.TwoFingerSync = t("famous-sync/TwoFingerSync"), s.FamousUi = {}, s.FamousUi.Buttons_ButtonBase = t("famous-ui/Buttons/ButtonBase"), s.FamousUi.Buttons_RotateButton = t("famous-ui/Buttons/RotateButton"), s.FamousUi.Buttons_SpringButton = t("famous-ui/Buttons/SpringButton"), s.FamousUi.Buttons_SpringButton.ui = t("famous-ui/Buttons/SpringButton.ui"), s.FamousUi.ColorPicker_AlphaPicker = t("famous-ui/ColorPicker/AlphaPicker"), s.FamousUi.ColorPicker_CanvasPicker = t("famous-ui/ColorPicker/CanvasPicker"), s.FamousUi.ColorPicker_ColorButton = t("famous-ui/ColorPicker/ColorButton"), s.FamousUi.ColorPicker_ColorPicker = t("famous-ui/ColorPicker/ColorPicker"), s.FamousUi.ColorPicker_GradientPicker = t("famous-ui/ColorPicker/GradientPicker"), s.FamousUi.ColorPicker_HuePicker = t("famous-ui/ColorPicker/HuePicker"), s.FamousUi.Dropdown_Dropdown = t("famous-ui/Dropdown/Dropdown"), s.FamousUi.Dropdown_DropdownItem = t("famous-ui/Dropdown/DropdownItem"), s.FamousUi.Easing_CanvasDrawer = t("famous-ui/Easing/CanvasDrawer"), s.FamousUi.Easing_EasingBool = t("famous-ui/Easing/EasingBool"), s.FamousUi.Easing_EasingVisualizer = t("famous-ui/Easing/EasingVisualizer"), s.FamousUi.Easing_MultiEasingToggle = t("famous-ui/Easing/MultiEasingToggle"), s.FamousUi.Text_Label = t("famous-ui/Text/Label"), s.FamousUi.Toggles_BoolToggle = t("famous-ui/Toggles/BoolToggle"), s.FamousUi.Toggles_MultiBoolToggle = t("famous-ui/Toggles/MultiBoolToggle"), s.FamousUi.AutoUI = t("famous-ui/AutoUI"), s.FamousUi.PanelScrollview = t("famous-ui/PanelScrollview"), s.FamousUi.Slider = t("famous-ui/Slider"), s.FamousUtils = {}, s.FamousUtils.FormatTime = t("famous-utils/FormatTime"), s.FamousUtils.KeyCodes = t("famous-utils/KeyCodes"), s.FamousUtils.NoiseImage = t("famous-utils/NoiseImage"), s.FamousUtils.Time = t("famous-utils/Time"), s.FamousUtils.TimeAgo = t("famous-utils/TimeAgo"), s.FamousUtils.Utils = t("famous-utils/Utils"), s.FamousViews = {}, s.FamousViews.ControlSet = t("famous-views/ControlSet"), s.FamousViews.Flip = t("famous-views/Flip"), s.FamousViews.InputSurface = t("famous-views/InputSurface"), s.FamousViews.LightBox = t("famous-views/LightBox"), s.FamousViews.ScrollContainer = t("famous-views/ScrollContainer"), s.FamousViews.Scrollview = t("famous-views/Scrollview"), s.FamousViews.SequentialLayout = t("famous-views/SequentialLayout"), s.FamousViews.Shaper = t("famous-views/Shaper"), s.FamousViews.Swappable = t("famous-views/Swappable"), s.SurfaceExtensions = {}, s.SurfaceExtensions.ExpandingSurface = t("surface-extensions/ExpandingSurface"), e.exports = s
         }), require(["lib/classList", "lib/functionPrototypeBind", "lib/requestAnimationFrame", "main"]), require("main")
     });
