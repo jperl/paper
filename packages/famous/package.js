@@ -3,5 +3,5 @@ Package.describe({
 });
 
 Package.on_use(function (api) {
-    api.add_files(['famous.lib.js', 'famous_wrapper.js', 'famous.css'], 'client');
+    api.add_files(['famous.css', 'famous.lib.js', 'famous_wrapper.js'], 'client');
 });
