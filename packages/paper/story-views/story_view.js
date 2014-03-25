@@ -18,22 +18,24 @@ Famous.loaded(function (require) {
                 borderRadius: "5px",
                 backgroundColor: "white"
             }
-        })
+        });
 
         this.profilePicsView = new ProfilePicsView({
             scale: this.options.scale,
             urls: this.options.profilePics
-        })
+        });
 
         this.nameView = new NameView({
             name: this.options.name
-        })
+        });
 
-        this.options.text && (this.textView = new TextView({
-            text: this.options.text,
-            time: this.options.time,
-            photos: !!this.options.photos
-        }))
+        if (this.options.text) {
+            this.textView = new TextView({
+                text: this.options.text,
+                time: this.options.time,
+                photos: !!this.options.photos
+            });
+        }
 
         var photos = this.options.photos;
         if (photos) {
@@ -125,7 +127,7 @@ Famous.loaded(function (require) {
                 origin: [.5, 1],
                 transform: Matrix.translate(0, e, .1),
                 target: this.photo.render()
-            })
+            });
         }
 
         this.spec.push({
