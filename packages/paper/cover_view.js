@@ -13,7 +13,7 @@ Famous.loaded(function (require) {
         this.profileImg.style.webkitBoxReflect = 'below';
 
         var coverBackground = new Surface({
-            content: '<img width="320" src="covers/bg.png" />'
+            content: '<img width="320" src="img/covers/bg.png" />'
         });
 
         var coverBackgroundTransform = new Modifier({

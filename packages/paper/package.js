@@ -5,8 +5,15 @@ Package.describe({
 Package.on_use(function (api) {
     api.use('famous');
 
+    //Not quite sure what this is: article-views/article_full_view.js
+
     api.add_files([
-        'paper.js', 'cover_view.js', 'article_story_view.js', 'stories_view.js'
+        'paper.js', 'cover_view.js',
+        'article-views/article_bottom_view.js', 'article-views/article_top_view.js', 'article-views/article_view.js',
+        'story-views/profile_pic_view.js', 'story-views/number_view.js', 'story-views/profile_pics_view.js',
+        'story-views/name_view.js', 'story-views/text_view.js', 'story-views/footer_view.js',
+        'story-views/article_story_view.js', 'story-views/photo_story_view.js',
+        'story-views/story_view.js', 'story-views/stories_view.js', 'app_view.js', 'app.css'
     ], 'client');
 
     api.export(['Paper'], 'client');

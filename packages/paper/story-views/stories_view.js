@@ -13,8 +13,8 @@ Famous.loaded(function (require) {
         Utility = require('famous/Utility'),
         Utils = require('famous-utils/Utils'),
 
-        StoryView = require('app/StoryViews/StoryView'),
-        PhotoStoryView = require('app/StoryViews/PhotoStoryView');
+        StoryView = Paper.StoryView,
+        PhotoStoryView = Paper.PhotoStoryView;
 
     function StoriesView() {
         View.apply(this, arguments);

@@ -11,17 +11,17 @@ Famous.loaded(function (require) {
     var CoverData = [
         {
             text: 'Objects in the mirror are unluckier than they appear.',
-            img: 'covers/sochi.jpg',
+            img: 'img/covers/sochi.jpg',
             name: 'Steve Kuzminski'
         },
         {
             text: 'Kylie Wilson changed her profile picture',
-            img: 'covers/sochi.jpg',
+            img: 'img/covers/sochi.jpg',
             name: 'Kylie Wilson'
         },
         {
             text: 'Sick gifs from Sochi',
-            img: 'covers/sochi.jpg',
+            img: 'img/covers/sochi.jpg',
             name: 'Chris Zimmerman'
         }
     ];
