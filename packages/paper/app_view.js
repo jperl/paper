@@ -1,36 +1,16 @@
 Famous.loaded(function (require) {
-    function AppView() {
-        r.apply(this, arguments), this.storiesView = new c, this.lightbox = new u({
-            inTransform: n.identity,
-            inOpacity: 0,
-            inOrigin: [.5, .5],
-            outTransform: n.identity,
-            outOpacity: 0,
-            outOrigin: [.5, .5],
-            showTransform: n.identity,
-            showOpacity: 1,
-            showOrigin: [.5, .5],
-            inTransition: {
-                duration: 1e3
-            },
-            outTransition: {
-                duration: 1e3
-            },
-            overlap: !0
-        }), this.covers = [];
-        for (var t = 0; t < CoverData.length; t++) {
-            var i = new l(CoverData[t]);
-            this.covers.push(i)
-        }
-        var t = 0;
-        this.lightbox.show(this.covers[0]), p.setInterval(function () {
-            t++, t === this.covers.length && (t = 0), this.lightbox.show(this.covers[t])
-        }.bind(this), 4e3);
-        var e = new o({
-            transform: n.translate(0, 0, -.1)
-        });
-        this._add(e).link(this.lightbox), this._add(this.storiesView)
-    }
+    var Engine = require('famous/Engine'),
+        Modifier = require("famous/Modifier"),
+        Matrix = (require("famous/Surface"), require("famous/Matrix")),
+        View = require("famous/View"),
+        Transitionable = (require("famous-animation/Easing"), require("famous-sync/GenericSync"), require("famous/Transitionable")),
+        SpringTransition = require("famous-physics/utils/SpringTransition"),
+        LightBox = require("famous-views/LightBox"),
+        Time = require("famous-utils/Time"),
+        StoriesView = Paper.StoriesView,
+        CoverView = Paper.CoverView;
+
+    Transitionable.registerMethod("spring", SpringTransition);
 
     var CoverData = [
         {
@@ -50,20 +30,52 @@ Famous.loaded(function (require) {
         }
     ];
 
-    var o = (require("famous/Engine"), require("famous/Modifier")),
-        n = (require("famous/Surface"), require("famous/Matrix")),
-        r = require("famous/View"),
-        a = (require("famous-animation/Easing"), require("famous-sync/GenericSync"), require("famous/Transitionable")),
-        h = require("famous-physics/utils/SpringTransition"),
-        u = require("famous-views/LightBox"),
-        p = require("famous-utils/Time"),
-        c = Paper.StoriesView,
-        l = Paper.CoverView;
+    function AppView() {
+        View.apply(this, arguments);
+        this.storiesView = new StoriesView;
+        this.lightbox = new LightBox({
+            inTransform: Matrix.identity,
+            inOpacity: 0,
+            inOrigin: [.5, .5],
+            outTransform: Matrix.identity,
+            outOpacity: 0,
+            outOrigin: [.5, .5],
+            showTransform: Matrix.identity,
+            showOpacity: 1,
+            showOrigin: [.5, .5],
+            inTransition: {
+                duration: 1e3
+            },
+            outTransition: {
+                duration: 1e3
+            },
+            overlap: !0
+        });
 
-    a.registerMethod("spring", h), AppView.prototype = Object.create(r.prototype), AppView.prototype.constructor = AppView, AppView.DEFAULT_OPTIONS = {}
+        this.covers = [];
+        for (var t = 0; t < CoverData.length; t++) {
+            var i = new CoverView(CoverData[t]);
+            this.covers.push(i)
+        }
+        var coverIndex = 0;
+        this.lightbox.show(this.covers[0]);
 
+        Time.setInterval(function () {
+            coverIndex++;
+            if (coverIndex === this.covers.length) coverIndex = 0;
+            this.lightbox.show(this.covers[coverIndex]);
+        }.bind(this), 4e3);
 
-    var Engine = require('famous/Engine');
+        var modifier = new Modifier({
+            transform: Matrix.translate(0, 0, -.1)
+        });
+        this._add(modifier).link(this.lightbox);
+        this._add(this.storiesView);
+    }
+
+    AppView.prototype = Object.create(View.prototype);
+    AppView.prototype.constructor = AppView;
+    AppView.DEFAULT_OPTIONS = {};
 
     var Context = Engine.createContext();
 
