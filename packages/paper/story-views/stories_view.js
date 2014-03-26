@@ -169,10 +169,10 @@ Famous.loaded(function (require) {
                         this.targetStory.disableFlip();
                         this.enableY = true;
                     }
+                }
 
-                    if (this.enableY) {
-                        this.yPos.set(Math.min(this.options.initY + 75, Math.max(-75, t.p[1])));
-                    }
+                if (this.enableY) {
+                    this.yPos.set(Math.min(this.options.initY + 75, Math.max(-75, t.p[1])));
                 }
             } else if (this.targetStory.scrollable && Math.abs(this.targetStory.scrollview.getVelocity()) > .05) {
                 this.storiesHandler.unpipe(this.scrollview);
@@ -200,6 +200,20 @@ Famous.loaded(function (require) {
             }
         }.bind(this));
     };
+
+    function correctYSyncHandlers() {
+        this.ySync.on("start", function () {
+            var t = this.yPos.get();
+            this.direction = void 0, 0 === t && this.targetStory.scrollable && this.targetStory.enableScroll(), 0 === t && this.targetStory.flipable && this.targetStory.enableFlip(), this.enableY = !1
+        }.bind(this)), this.ySync.on("update", function (t) {
+            var i = this.yPos.get();
+            this.direction || (Math.abs(t.v[1]) > Math.abs(t.v[0]) ? this.direction = "y" : (this.storiesHandler.unpipe(this.ySync), this.direction = "x")), "y" === this.direction ? (0 !== i ? (this.enableY = !0, this.swipeY = !0) : (this.targetStory.scrollable || this.targetStory.flipable || (this.enableY = !0), this.targetStory.scrollable && this.targetStory.top && t.v[1] > 0 && (this.targetStory.disableScroll(), this.enableY = !0), this.targetStory.flipable && this.targetStory.closed && t.v[1] > 0 && (this.targetStory.disableFlip(), this.enableY = !0)), this.enableY && this.yPos.set(Math.min(this.options.initY + 75, Math.max(-75, t.p[1])))) : this.targetStory.scrollable && Math.abs(this.targetStory.scrollview.getVelocity()) > .05 && this.storiesHandler.unpipe(this.scrollview)
+        }.bind(this)), this.ySync.on("end", function (t) {
+            this.storiesHandler.pipe(this.scrollview), this.storiesHandler.pipe(this.ySync);
+            var i = t.v[1].toFixed(2);
+            this.enableY && (this.yPos.get() < this.options.posThreshold ? i > this.options.velThreshold ? this.slideDown(i) : this.slideUp(Math.abs(i)) : i < -this.options.velThreshold ? this.slideUp(Math.abs(i)) : this.slideDown(i))
+        }.bind(this))
+    }
 
     function StoriesView() {
         View.apply(this, arguments);
@@ -260,35 +274,25 @@ Famous.loaded(function (require) {
     StoriesView.prototype.slideDown = function (t) {
         console.log("slide down");
         var i = this.options.spring;
-        i.velocity = t;
-        this.options.scrollOpts.paginated = false;
-        this.scrollview.setOptions(this.options.scrollOpts);
-        this.yPos.set(this.options.initY, i);
+        i.velocity = t, this.options.scrollOpts.paginated = !1, this.scrollview.setOptions(this.options.scrollOpts), this.yPos.set(this.options.initY, i)
     };
 
     StoriesView.prototype.render = function () {
-        var yPos = this.yPos.get(),
-            i = Utils.map(yPos, 0, this.options.initY, 1, this.options.cardScale);
-
-        this.progress = Utils.map(yPos, this.options.initY, 0, 0, 1, true);
-
-        this.scrollview.sync.setOptions({
+        var t = this.yPos.get(),
+            i = Utils.map(t, 0, this.options.initY, 1, this.options.cardScale);
+        this.progress = Utils.map(t, this.options.initY, 0, 0, 1, !0), this.scrollview.sync.setOptions({
             direction: GenericSync.DIRECTION_X,
             scale: 1 / i
         });
         for (var e = 0; e < this.stories.length; e++) this.stories[e].setProgress(this.progress);
-
-        this.spec = [];
-        this.spec.push({
+        return this.spec = [], this.spec.push({
             origin: [.5, 1],
             transform: Matrix.scale(i, i, 1),
             target: {
                 size: [window.innerWidth, window.innerHeight],
                 target: this.scrollview.render()
             }
-        });
-
-        return this.spec;
+        }), this.spec
     };
 
     Paper.StoriesView = StoriesView;
