@@ -1,3 +1,3 @@
-The famo.us demo in a meteor app, partially de-minified.
+The facebook paper cards rebuilt in javascript.
 
-From http://demo.famo.us/ "The only demo on this page that is ready for production and based on modern famo.us is the Tweetus demo." So checkout https://github.com/jperl/tweetus as well.
+This uses [velocity](velocityjs.org) for animations and [hammerjs](https://github.com/hammerjs/hammer.js) for touch events.
