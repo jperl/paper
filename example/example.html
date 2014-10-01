@@ -1,0 +1,23 @@
+<head>
+    <title>example</title>
+</head>
+
+<body>
+{{> cards}}
+</body>
+
+<template name="cards">
+    <div class="container">
+        <div class="horizontal-scroll-view promote">
+            <div class="cards promote">
+                {{#each cards}}
+                <div class="card">
+                    <img src="{{src}}">
+
+                    <h1>{{name}}</h1>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</template>
