@@ -159,7 +159,7 @@ Cards.DEFAULT_OPTIONS = {
 
   cardMargin: 5,
 
-  marginTop: 56,
+  marginTop: 0,
 
   // Snap point
   smallScale: .4,
