@@ -1,6 +1,10 @@
 {
   "dependencies": [
     [
+      "jquery",
+      "1.0.0"
+    ],
+    [
       "meteor",
       "1.1.1"
     ],

@@ -6,7 +6,7 @@ Package.describe({
 });
 
 Package.onUse(function (api) {
-  api.use(['stevezhu:velocity.js'], 'web');
+  api.use(['jquery', 'stevezhu:velocity.js'], 'web');
   api.addFiles(['hammer.js/hammer.js', 'cards.js'], 'web');
   api.export('Cards', 'web');
 });

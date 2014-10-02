@@ -87,6 +87,11 @@ var Tools = {
 
 var TRANSFORM_KEY = Tools.prefixed(TEST_ELEMENT.style, 'transform');
 
+// Prevent velocity from resetting scale to 1 on the first scale run on android.
+// https://github.com/julianshapiro/velocity/blob/master/jquery.velocity.js#L867-L872
+// See https://github.com/julianshapiro/velocity/pull/174
+$.Velocity.State.isAndroid = false;
+
 /**
  * Allow the user to drag cards up and down.
  * Scroll, scale and snap the card into place.
