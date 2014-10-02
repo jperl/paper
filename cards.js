@@ -12,6 +12,7 @@ var Mode = {
 
 var DECELERATION = .0008,
   SPRING = [200, 25],
+  CIRCULAR_BEZIER = [0.1, 0.57, 0.1, 1],
   QUADRATIC_BEZIER = [0.25, 0.46, 0.45, 0.94];
 
 var TEST_ELEMENT = document.createElement('div');
@@ -169,6 +170,8 @@ Cards.DEFAULT_OPTIONS = {
   initialIndex: 0,
   initialScale: .4,
 
+  bounceTime: 600,
+
   debug: false
 };
 
@@ -257,8 +260,18 @@ Cards.prototype._handlePan = function (panEvent) {
     if (self.scale !== 1) {
       // Calculate the delta from the previous pan event.
       deltaX = panEvent.deltaX;
+
       if (self._previousPan) deltaX -= self._previousPan.deltaX;
-      self._translateLeft -= deltaX / self.scale;
+
+      var dxScaled = - deltaX / self.scale;
+
+      // Slow down if scrolling outside the boundaries
+      var newX = self._translateLeft + dxScaled;
+      if (self._panMode === Mode.SCROLLING && (newX < 0 || newX > self._maxTranslateLeftSmallScale)) {
+        newX = self._translateLeft + dxScaled / 3;
+      }
+
+      self._translateLeft = newX;
     }
 
     // If we are still panning, keep track of the last pan event.
@@ -329,6 +342,8 @@ Cards.prototype._startPan = function (panEvent, targetCardIndex) {
   self._targetCardIndex = targetCardIndex;
   self._stopAnimation();
 
+  self._initialPanEvent = panEvent;
+
   self.options.debug && console.log('start pan', 'scale', self.scale, 'velocityX',
     panEvent.velocityX, 'velocityY', panEvent.velocityY, panEvent);
 
@@ -389,9 +404,6 @@ Cards.prototype._transform = function (newScale) {
     Tools.transform(self.cards, cardsTransform);
   }
 };
-
-var _parentLevelOutRange = [Cards.DEFAULT_OPTIONS.smallScale, .8],
-  _parentLevelOutOpacity = [.99, 0];
 
 Cards.prototype._updateProgress = function () {
   var self = this;
@@ -469,8 +481,13 @@ Cards.prototype._scaleEnded = function (panEvent) {
     targetIndex = targetIndex >= 0 && targetIndex < self.cardElements.length ? targetIndex : self._targetCardIndex;
   }
 
-
   self.snap(snapToFullScale ? 1 : self.options.smallScale, targetIndex);
+};
+
+var calculateDuration = function (current, destination, time) {
+  var distance = Math.abs(current - destination);
+  var speed = distance / time;
+  return distance / speed;
 };
 
 /**
@@ -479,22 +496,43 @@ Cards.prototype._scaleEnded = function (panEvent) {
 Cards.prototype._scrollEnded = function (panEvent) {
   var self = this;
 
+  self._stopAnimation();
   self.options.debug && console.log('scroll ended');
 
-  var translateLeftWithMomentum = self._translateLeft + (panEvent.velocityX * panEvent.velocityX) / (2 * DECELERATION) * (panEvent.deltaX > 0 ? - 1 : 1);
+  var time = panEvent.timeStamp - self._initialPanEvent.timeStamp;
 
-  if (translateLeftWithMomentum < 0) {
-    translateLeftWithMomentum = 0;
-  } else if (translateLeftWithMomentum > self._maxTranslateLeftSmallScale) {
-    translateLeftWithMomentum = self._maxTranslateLeftSmallScale;
+  var momentum = (panEvent.velocityX * panEvent.velocityX) / (2 * DECELERATION) * (panEvent.deltaX > 0 ? - 1 : 1);
+  var momentumDestination = self._translateLeft + momentum;
+
+  // change easing function when scroller goes out of the boundaries
+  var easing = QUADRATIC_BEZIER;
+
+  if (momentumDestination > self._maxTranslateLeftSmallScale) {
+    momentumDestination = self._maxTranslateLeftSmallScale + ( window.innerWidth / 2.5 * ( panEvent.velocityX / 8 ) );
+  } else if (momentumDestination < 0) {
+    momentumDestination = window.innerWidth / 2.5 * ( panEvent.velocityX / 8 );
+  } else {
+    easing = CIRCULAR_BEZIER;
   }
 
-  var animateOpts = {
-    duration: panEvent.velocityX / DECELERATION,
-    translateLeft: [translateLeftWithMomentum, QUADRATIC_BEZIER, self._translateLeft]
-  };
+  var momentumDuration = calculateDuration(self._translateLeft, momentumDestination, time);
 
-  self._animateTransform(animateOpts);
+  var momentumAnimation = self._animateTransform({
+    duration: momentumDuration,
+    translateLeft: [momentumDestination, easing, self._translateLeft]
+  });
+
+  // If we are outside of the boundaries, bounce back in
+  var destinationInBoundaries = null;
+  if (momentumDestination > self._maxTranslateLeftSmallScale) destinationInBoundaries = self._maxTranslateLeftSmallScale;
+  else if (momentumDestination < 0) destinationInBoundaries = 0;
+
+  if (destinationInBoundaries !== null) {
+    self._animateTransform({
+      duration: self.options.bounceTime - momentumDuration,
+      translateLeft: [destinationInBoundaries, CIRCULAR_BEZIER, momentumDestination]
+    }, null, momentumAnimation);
+  }
 };
 
 Cards.prototype._handleTap = function (tapEvent) {
@@ -553,7 +591,7 @@ Cards.prototype.snap = function (snapToScale, targetIndex) {
   });
 };
 
-Cards.prototype._animateTransform = function (animationOpts, complete) {
+Cards.prototype._animateTransform = function (animationOpts, complete, chain) {
   var self = this;
 
   if (animationOpts.translateLeft !== undefined) {
@@ -561,8 +599,10 @@ Cards.prototype._animateTransform = function (animationOpts, complete) {
     delete animationOpts.translateLeft;
   }
 
+  chain = chain || self.$animationPlaceholder;
+
   // Use the animation placeholder element with velocity to get the animation values.
-  self.$animationPlaceholder.velocity(animationOpts, {
+  return chain.velocity(animationOpts, {
     progress: function (elements) {
       var style = elements[0].style,
         elementTransform = style.transform || style.webkitTransform;
