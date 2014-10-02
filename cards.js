@@ -15,32 +15,8 @@ var DECELERATION = .0008,
   CIRCULAR_BEZIER = [0.1, 0.57, 0.1, 1],
   QUADRATIC_BEZIER = [0.25, 0.46, 0.45, 0.94];
 
-var TEST_ELEMENT = document.createElement('div');
 var VENDOR_PREFIXES = ['', 'webkit', 'moz', 'MS', 'ms', 'o'];
-
-/**
- * get the prefixed property
- * @param {Object} obj
- * @param {String} property
- * @returns {String|Undefined} prefixed
- */
-function prefixed(obj, property) {
-  var prefix, prop;
-  var camelProp = property[0].toUpperCase() + property.slice(1);
-
-  for (var i = 0, len = VENDOR_PREFIXES.length; i < len; i ++) {
-    prefix = VENDOR_PREFIXES[i];
-    prop = (prefix) ? prefix + camelProp : property;
-
-    if (prop in obj) {
-      return prop;
-    }
-  }
-
-  return undefined;
-}
-
-var transformKey = prefixed(TEST_ELEMENT.style, 'transform');
+var TEST_ELEMENT = document.createElement('div');
 
 var Tools = {
   /**
@@ -82,14 +58,34 @@ var Tools = {
     return result;
   },
   /**
+   * Get the prefixed property.
+   */
+  prefixed: function (obj, property) {
+    var prefix, prop;
+    var camelProp = property[0].toUpperCase() + property.slice(1);
+
+    for (var i = 0, len = VENDOR_PREFIXES.length; i < len; i ++) {
+      prefix = VENDOR_PREFIXES[i];
+      prop = (prefix) ? prefix + camelProp : property;
+
+      if (prop in obj) {
+        return prop;
+      }
+    }
+
+    return undefined;
+  },
+  /**
    * Get or set the transform on an element.
    */
   transform: function (element, transform) {
     if (transform === undefined) return element.style[transformKey];
 
-    element.style[transformKey] = transform;
+    element.style[TRANSFORM_KEY] = transform;
   }
 };
+
+var TRANSFORM_KEY = Tools.prefixed(TEST_ELEMENT.style, 'transform');
 
 /**
  * Allow the user to drag cards up and down.
@@ -99,6 +95,7 @@ Cards = function (options, callbacks) {
   var self = this;
 
   self.options = _.extend({}, Cards.DEFAULT_OPTIONS, options);
+  self.callbacks = callbacks || {};
 
   self.$scrollview = options.$scrollview;
   self.scrollview = self.$scrollview[0];
@@ -413,19 +410,7 @@ Cards.prototype._updateProgress = function () {
 
   self._progress = progress;
 
-  // TODO API HOOK
-  // for (var i = 0; i < self.cardElements.length; i++) {
-  //  Card.progress(self.cardElements[i], progress, i === self._targetCardIndex);
-  // }
-
-  // Transition the parent level / root card out on child level progress.
-  var levels = self.parent.children;
-
-  var parentLevelIndex = _.indexOf(levels, self.scrollview) - 1;
-  if (parentLevelIndex < 0) return;
-
-  // TODO API HOOK
-  // levels[parentLevelIndex].style.opacity = Tools.map(progress, _parentLevelOutRange, _parentLevelOutOpacity, true, 2);
+  self.callbacks.progress && self.callbacks.progress(progress);
 };
 
 Cards.prototype._handlePanEnd = function (event) {
