@@ -437,6 +437,8 @@ Cards.prototype._handlePanEnd = function (event) {
   // Use the last pan event with velocity.
   var panEvent = self._lastPanEvent || event;
 
+  self._stopAnimation();
+
   if (self._panMode === Mode.PANNING) self._scaleEnded(panEvent);
   else self._scrollEnded(panEvent);
 
@@ -496,7 +498,6 @@ var calculateDuration = function (current, destination, time) {
 Cards.prototype._scrollEnded = function (panEvent) {
   var self = this;
 
-  self._stopAnimation();
   self.options.debug && console.log('scroll ended');
 
   var time = panEvent.timeStamp - self._initialPanEvent.timeStamp;
