@@ -532,8 +532,14 @@ Cards.prototype._handleTap = function (tapEvent) {
   var targetCardIndex = calculateTargetCardIndex.call(self, tapEvent.center.x);
   if (targetCardIndex === null) return;
 
+  // Snap the card up
+  var snapUp = self.scale < 1;
+  if (snapUp) {
+    self.snap(1, targetCardIndex);
+  }
+
   // Trigger an event on the card element
-  $(self.cardElements[targetCardIndex]).trigger('cardTap', { index: targetCardIndex });
+  $(self.cardElements[targetCardIndex]).trigger('cardTap', { index: targetCardIndex, snapUp: snapUp });
 };
 
 /**

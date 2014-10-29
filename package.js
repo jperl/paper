@@ -1,7 +1,7 @@
 Package.describe({
   name: 'jonperl:paper',
   summary: 'Card interface for the web, like facebook paper',
-  version: '0.0.1',
+  version: '0.0.2',
   git: 'https://github.com/jperl/paper.git'
 });
 
